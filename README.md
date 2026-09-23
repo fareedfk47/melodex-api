@@ -1,65 +1,61 @@
 # 🎵 Melodex API
 
-A RESTful backend API for a Spotify-like music streaming platform built with **Node.js**, **Express**, **MongoDB**, and **ImageKit** for cloud media storage.
+Melodex is a Spotify-inspired music streaming backend that I built to practice building REST APIs and working with authentication, MongoDB, file uploads, and cloud storage.
 
----
+The API is built with **Node.js, Express, MongoDB, Mongoose, and ImageKit**.
 
-## 🚀 Features
+## 🚀 What I Built
 
-- 👤 User registration & login with **role-based access control** (`user` / `artist`)
-- 🔐 Secure authentication using **JWT** stored in HTTP-only cookies
-- 🎵 Music track upload to **ImageKit CDN** (artists only)
-- 💿 Album creation with linked tracks (artists only)
-- 📂 Browse all music & albums (any authenticated user)
-- 🔍 Album detail view with populated tracks & artist info
-
----
+* 👤 User registration and login
+* 🔐 JWT authentication using HTTP-only cookies
+* 👥 Role-based access for `user` and `artist`
+* 🎵 Music upload for artists
+* ☁️ Music files stored on ImageKit CDN
+* 💿 Album creation with multiple tracks
+* 📂 Browse music and albums
+* 🔍 Get album details with tracks and artist information
 
 ## 🛠️ Tech Stack
 
-| Layer          | Technology              |
-|----------------|-------------------------|
-| Runtime        | Node.js                 |
-| Framework      | Express.js v5           |
-| Database       | MongoDB + Mongoose      |
-| Authentication | JWT + HTTP-only Cookies |
-| File Storage   | ImageKit CDN            |
-| File Uploads   | Multer (memory storage) |
-| Passwords      | bcryptjs                |
-
----
+| Part             | Technology              |
+| ---------------- | ----------------------- |
+| Runtime          | Node.js                 |
+| Backend          | Express.js v5           |
+| Database         | MongoDB + Mongoose      |
+| Authentication   | JWT + HTTP-only Cookies |
+| File Storage     | ImageKit                |
+| File Uploads     | Multer                  |
+| Password Hashing | bcryptjs                |
 
 ## 📁 Project Structure
 
-```
+```text
 spotify/
-├── server.js               # Entry point
-├── .env.example            # Environment variable template
+├── server.js
+├── .env.example
 ├── src/
-│   ├── app.js              # Express app (middleware + routes)
+│   ├── app.js
 │   ├── db/
-│   │   └── db.js           # MongoDB connection
+│   │   └── db.js
 │   ├── models/
-│   │   ├── user.model.js   # User schema
-│   │   ├── music.model.js  # Music track schema
-│   │   └── album.model.js  # Album schema
+│   │   ├── user.model.js
+│   │   ├── music.model.js
+│   │   └── album.model.js
 │   ├── controllers/
-│   │   ├── auth.controller.js   # Register, Login, Logout
-│   │   └── music.controller.js  # Music & Album CRUD
+│   │   ├── auth.controller.js
+│   │   └── music.controller.js
 │   ├── routes/
-│   │   ├── auth.route.js        # /api/auth/*
-│   │   └── music.route.js       # /api/music/*
+│   │   ├── auth.route.js
+│   │   └── music.route.js
 │   ├── middlewares/
-│   │   └── auth.middleware.js   # JWT verification
+│   │   └── auth.middleware.js
 │   └── services/
-│       └── storage.service.js   # ImageKit upload service
+│       └── storage.service.js
 ```
-
----
 
 ## ⚙️ Getting Started
 
-### 1. Clone the repository
+### 1. Clone the project
 
 ```bash
 git clone https://github.com/your-username/melodex-api.git
@@ -72,96 +68,128 @@ cd melodex-api
 npm install
 ```
 
-### 3. Set up environment variables
+### 3. Create the `.env` file
 
-```bash
-cp .env.example .env
-```
-
-Fill in your `.env` file:
+Create a `.env` file in the root directory and add:
 
 ```env
 MONGOOSE_URI=your_mongodb_connection_string
+
 JWT_SECRETKEY=your_super_secret_jwt_key
+
 IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
 IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_imagekit_id
+
 CLIENT_URL=http://localhost:5173
 ```
 
-### 4. Start the development server
+### 4. Start the server
 
 ```bash
 npm run dev
 ```
 
-Server will start on **http://localhost:3000**
+The server will run on:
 
----
+```text
+http://localhost:3000
+```
 
-## 📡 API Reference
+## 📡 API Routes
 
-### 🔐 Auth Routes — `/api/auth`
+### 🔐 Authentication — `/api/auth`
 
-| Method | Endpoint    | Auth     | Body                              | Description          |
-|--------|-------------|----------|-----------------------------------|----------------------|
-| POST   | `/register` | ❌ None  | `username, email, password, role` | Register a new user  |
-| POST   | `/login`    | ❌ None  | `username/email, password`        | Login                |
-| POST   | `/logout`   | ❌ None  | —                                 | Logout (clears cookie) |
+| Method | Endpoint    | Auth | Description                 |
+| ------ | ----------- | ---- | --------------------------- |
+| POST   | `/register` | ❌    | Create a new account        |
+| POST   | `/login`    | ❌    | Login                       |
+| POST   | `/logout`   | ❌    | Logout and clear the cookie |
 
-> `role` can be `"user"` (default) or `"artist"`
+When registering, the role can be:
 
----
+```text
+user
+artist
+```
 
-### 🎵 Music Routes — `/api/music`
+If no role is provided, it defaults to `user`.
 
-| Method | Endpoint           | Auth          | Body / Params             | Description              |
-|--------|--------------------|---------------|---------------------------|--------------------------|
-| POST   | `/upload`          | 🎤 Artist only | `title` + `music` (file)  | Upload a music track     |
-| POST   | `/album`           | 🎤 Artist only | `title, musics[]`         | Create an album          |
-| GET    | `/`                | 👤 Any user   | —                         | Get all music (limit 10) |
-| GET    | `/albums`          | 👤 Any user   | —                         | Get all albums           |
-| GET    | `/albums/:albumId` | 👤 Any user   | `albumId` (param)         | Get album by ID          |
+### 🎵 Music — `/api/music`
 
----
+| Method | Endpoint           | Access              | Description          |
+| ------ | ------------------ | ------------------- | -------------------- |
+| POST   | `/upload`          | Artist              | Upload a music track |
+| POST   | `/album`           | Artist              | Create an album      |
+| GET    | `/`                | Authenticated users | Get music            |
+| GET    | `/albums`          | Authenticated users | Get all albums       |
+| GET    | `/albums/:albumId` | Authenticated users | Get album details    |
+
+For music uploads, I use **Multer** to receive the file and then upload it to **ImageKit**.
 
 ## 🔒 Authentication
 
-This API uses **JWT tokens** stored in HTTP-only cookies.
+I used **JWT-based authentication** for the project.
 
-- After login/register, a `token` cookie is set automatically.
-- Protected routes read this cookie via `cookie-parser`.
-- Tokens expire in **7 days**.
+After registration or login, the server creates a JWT and stores it in an **HTTP-only cookie**.
 
----
+Protected routes read the cookie and verify the token before allowing access.
 
-## 📦 Environment Variables
+The token expires after **7 days**.
 
-| Variable               | Description                            |
-|------------------------|----------------------------------------|
-| `MONGOOSE_URI`         | MongoDB Atlas connection string        |
-| `JWT_SECRETKEY`        | Secret key for signing JWT tokens      |
-| `IMAGEKIT_PRIVATE_KEY` | ImageKit private API key               |
-| `IMAGEKIT_PUBLIC_KEY`  | ImageKit public API key                |
-| `IMAGEKIT_URL_ENDPOINT`| ImageKit URL endpoint for your account |
-| `CLIENT_URL`           | Frontend URL (used for CORS)           |
+I also added role-based authorization, so artist-only operations like uploading music and creating albums can't be accessed by regular users.
 
----
+## 🗄️ Database
 
-## 🧪 Testing with Postman
+I used **MongoDB with Mongoose** for storing users, music tracks, and albums.
 
-A Postman collection is included in the `/postman` directory.
+Albums store references to music tracks, which lets me use Mongoose `populate()` to get the related tracks and artist information when fetching an album.
 
-1. Import the collection from the `/postman` folder
-2. Set the base URL to `http://localhost:3000`
-3. Register a user first, then use the returned cookie for authenticated routes
+## 🧪 Testing
 
----
+I tested the API using **Postman**.
+
+The project includes a Postman collection in the `postman` folder.
+
+A typical flow is:
+
+```text
+Register
+   ↓
+Login
+   ↓
+JWT cookie is created
+   ↓
+Access protected routes
+   ↓
+Artist → Upload music
+   ↓
+Artist → Create album
+   ↓
+Users → Browse music/albums
+```
+
+## 🎯 Why I Built This
+
+I built Melodex mainly to get hands-on experience with backend development.
+
+While working on it, I practiced:
+
+* Building REST APIs with Express
+* Connecting MongoDB with Mongoose
+* JWT authentication
+* HTTP-only cookies
+* Role-based authorization
+* Password hashing with bcrypt
+* File uploads with Multer
+* Cloud storage with ImageKit
+* MongoDB relationships and `populate()`
+* Testing APIs with Postman
 
 ## 📄 License
 
-This project is licensed under the **ISC License**.
+This project is licensed under the ISC License.
 
 ---
 
-> Built with ❤️ as a Spotify-inspired backend project.
+Built with ❤️ while learning backend development.
