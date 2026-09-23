@@ -4,11 +4,18 @@ const bcrypt = require("bcryptjs");
 
 async function registerUser(req, res) {
   try {
-    const { username, email, password, role = "user" } = req.body;
+    const { username, email, password, } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        message: "Username, email and password are required",
+      });
+    }
 
     const existingUser = await userModel.findOne({
       $or: [{ username }, { email }],
     });
+
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -19,7 +26,7 @@ async function registerUser(req, res) {
       username,
       email,
       password: hashedPassword,
-      role,
+      role: "user"
     });
 
     const token = jwt.sign(
