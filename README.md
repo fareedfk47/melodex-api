@@ -58,7 +58,7 @@ spotify/
 ### 1. Clone the project
 
 ```bash
-git clone https://github.com/your-username/melodex-api.git
+git clone https://github.com/fareedfk47/melodex-api.git
 cd melodex-api
 ```
 
