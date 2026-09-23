@@ -30,7 +30,7 @@ The API is built with **Node.js, Express, MongoDB, Mongoose, and ImageKit**.
 ## 📁 Project Structure
 
 ```text
-spotify/
+melodex-api/
 ├── server.js
 ├── .env.example
 ├── src/
